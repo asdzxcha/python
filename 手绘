@@ -1,0 +1,33 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue May 12 11:06:58 2020
+
+@author: 11799
+"""
+
+from PIL import Image
+import numpy as np
+
+a=np.asarray(Image.open('D:\Study\照片\手绘贝吉特.jpg').convert('L')).astype('float')
+
+depth=10. #(0-100)
+grad=np.gradient(a) #取得图像灰度的梯度值
+grad_x,grad_y=grad  #分别取得模拟图像梯度值
+grad_x=grad_x*depth/100.
+grad_y=grad_y*depth/100.
+A=np.sqrt(grad_x**2+grad_y**2+1.)
+uni_x=grad_x/A
+uni_y=grad_y/A
+uni_z=1./A
+
+vac_el=np.pi/2.2    #光源的俯视角度，弧度值
+vac_az=np.pi/4.     #光源的方位角度，弧度值
+dx=np.cos(vac_el)*np.cos(vac_az)    #光源对x轴的影响
+dy=np.cos(vac_el)*np.sin(vac_az)    #光源对y轴的影响
+dz=np.sin(vac_el)   #光源对z轴的影响
+
+b=255*(dx*uni_x+dy*uni_y+dz*uni_z)  #光源归一化
+b=b.clip(0,255)
+
+im=Image.fromarray(b.astype('uint8'))    #重构图像
+im.save("D:\Study\照片\手绘.jpg")
