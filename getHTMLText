@@ -1,0 +1,41 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May 27 08:50:44 2020
+
+@author: 11799
+"""
+
+import requests
+import bs4
+from bs4 import BeautifulSoup
+
+def getHTMLText(url):   #获取网页内容
+    try:
+        head={'user-agent':'chrome'}
+        r=requests.get(url,headers=head)
+        r.raise_for_status()
+        r.encoding=r.apparent_encoding
+        demo=r.text
+    except:
+        return ''
+    return demo
+
+def fillUnivList(ulist,html):   #从网页内容中提取合适的数据结构
+    soup=BeautifulSoup(html,'html.parser')
+    for tr in soup.find('tbody').children:  #遍历tbody的子标签
+        if isinstance(tr,bs4.element.Tag):  #检测tr标签的类型
+            tds=tr('td')
+            ulist.append([tds[0].string,tds[1].string,tds[4].string])
+            
+    
+def printUnivList(ulist,num):   #利用数据结构并展示结果
+    print('{:^10}\t{:^6}\t{:^10}'.format('排名','学校名称','总分'))
+    for i in range(num):
+        u=ulist[i]
+        print('{:^10}\t{:^6}\t{:^10}'.format(u[0],u[1],u[2]))
+
+uinfo=[] 
+url='http://www.zuihaodaxue.com/zuihaodaxuepaiming2020.html'
+html=getHTMLText(url)
+fillUnivList(uinfo,html)
+printUnivList(uinfo,353) #学校
