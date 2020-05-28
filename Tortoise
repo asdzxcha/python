@@ -1,0 +1,63 @@
+from random import *
+class GameAnimal:
+    def initLocation(self):
+        self.x=randint(0,10)
+        self.y=randint(0,10)
+    def move(self,mobility):
+        path=choice(['x','y'])
+        if path=='x':
+            self.step=choice(mobility)
+            next_x=self.x+self.step
+            if 0<=next_x<=10:
+                self.x=next_x
+            elif next_x<0:
+                self.x=abs(next_x)
+            elif next_x>10:
+                self.x=10+(10-next_x)
+        elif path=='y':
+            self.step=choice(mobility)
+            next_y=self.y+self.step
+            if 0<=next_y<=10:
+                self.y=next_y
+            elif next_y<0:
+                self.y=abs(next_y)
+            elif next_y>10:
+                self.y=10+(10-next_y) 
+class Tortoise(GameAnimal): #乌龟
+    hp=100
+    def initLocation(self):
+        super().initLocation()
+    def move(self,mobility=[-2,-1,1,2]):
+        super().move(mobility)
+class Fish(GameAnimal): #鱼
+    def initLoction(self):
+        super().initLoction()
+    def move(self,mobility=[-1,1]):
+        super().move(mobility)
+tor=Tortoise()
+tor.initLocation()
+print("创建乌龟初始位置：({},{})".format(tor.x,tor.y))
+list_fish={}
+for i in range(1,11):
+    fish=Fish()
+    list_fish[fish]=i
+    fish.initLocation()
+    print("创建第{}条鱼 初始位置：({},{})".format(i,fish.x,fish.y))
+while(True):
+    for fishs in list(list_fish.keys()):
+        if fishs.x==tor.x and fishs.y==tor.y:
+            tor.hp+=20
+            print("第{}条鱼被吃掉了，其位置：({},{})，当前乌龟体力为{}".format(list_fish[fishs],fishs.x,fishs.y,tor.hp))
+            del list_fish[fishs]
+        else:
+            fishs.move()
+            print("第{}条鱼移动后的位置：({},{})".format(list_fish[fishs],fishs.x,fishs.y))
+    tor.move()
+    tor.hp-=1
+    print("当前乌龟的移动步长为：{}，移动后的位置：({},{})，当前体力：{}".format(abs(tor.step),tor.x,tor.y,tor.hp))
+    if list_fish=={}:
+        print("鱼被吃光了")
+        break
+    if tor.hp==0:
+        print("龟龟体力不支，累死了")
+        break
