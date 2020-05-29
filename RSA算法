@@ -1,0 +1,194 @@
+from tkinter import * #加密
+from random import *
+from math import *
+import rsa
+class Choose:
+    def choose_p(self): #挑选素数p
+        while True:
+            next_p=randint(999,9999)
+            for i in range(2,int(sqrt(next_p))+1):           
+                if next_p%i==0:
+                    break
+            else:
+                self.p=next_p
+                break
+    def choose_q(self): #挑选素数q
+        while True:
+            next_q=randint(999,9999)
+            for i in range(2,int(sqrt(next_q))+1):
+                if next_q%i==0:
+                    break
+            else:
+                self.q=next_q
+                break 
+class main:
+    def choose_e(fi): #挑选e
+        while True:
+            e=randint(1,fi)
+            x,y=e,fi
+            while True:
+                x,y=y,x%y #辗转相除法求最大公约数
+                if x%y==0:
+                    break
+            if y==1: #最大公约数为1表示两个数互素
+                break
+        return e
+    def mod(m,e,n): #计算模指数的平方乘算法
+        c=1
+        while e>0:
+            if (e&1)==1:
+                c=c*m%n
+            m=pow(m,2)%n
+            e=e>>1
+        return c
+    
+    def window_e(Public_key,Private_key,n,e,d): #加密界面设计
+        def mod(m,e,n): #计算模指数的平方乘算法
+            c=1
+            while e>0:
+                if (e&1)==1:
+                    c=c*m%n
+                m=pow(m,2)%n
+                e=e>>1
+            return c
+        def encrypt():  #获取消息输入并进行加密然后在Label4中显示出来
+            num=int(number.get())
+            l1.config(text=Public_key)
+            l2.config(text=Private_key)
+            c=int(mod(num,e,n))
+            l4.config(text="生成签名："+str(c))
+            m=int(mod(c,d,n))
+            l5.config(text="验证签名："+str(m)) #Label5中显示验证消息签名
+        win=Tk()
+        win.title("RSA算法(加密）")
+        win.geometry("400x200")
+        l1=Label(win,text="公有密钥")
+        l1.grid(row=0,column=0,sticky=W)
+        l2=Label(win,text="私有密钥")
+        l2.grid(row=1,column=0,sticky=W)
+        l3=Label(win,text="请输入数字信息：")
+        l3.grid(row=2,column=0,sticky=W)
+        l4=Label(win,text="生成签名")
+        l4.grid(row=3,column=0,sticky=W)
+        l5=Label(win,text="验证签名")
+        l5.grid(row=4,column=0,sticky=W)
+        number=StringVar()
+        text=Entry(win,textvariable=number,width=16) #Entry控件获取消息输入
+        text.grid(row=2,column=1,sticky=W)
+        btn1=Button(win,text="加密")
+        btn1.config(anchor=CENTER)
+        btn1.config(command=encrypt) #Button1控件触发消息加密事件
+        btn1.grid(row=2,column=2)
+        win.mainloop()
+        
+    ch=Choose()
+    ch.choose_p()
+    ch.choose_q()
+    n=ch.p*ch.q #计算n=*q
+    fi=(ch.p-1)*(ch.q-1)
+    e=choose_e(fi)
+    for d in range(1,fi): #计算d
+        if d*e%fi==1:
+            break
+    Public_key="公有密钥n："+str(n)+",e："+str(e)
+    Private_key="私有密钥p："+str(ch.p)+",q为："+str(ch.q)+",d为："+str(d)
+    window_e(Public_key,Private_key,n,e,d)
+---------------------------------------------------------------------------------------------------------------------------------------
+from tkinter import * #解密
+def window_d(): #解密界面设计
+        def mod(m,e,n): #计算模指数的平方乘算法
+            c=1
+            while e>0:
+                if (e&1)==1:
+                    c=c*m%n
+                m=pow(m,2)%n
+                e=e>>1
+            return c
+        def decrypt():  #获取消息输入并进行加密然后在Label4中显示出来
+            c=int(number.get())
+            d=int(dt.get())
+            n=int(nt.get())
+            m=int(mod(c,d,n))
+            l4.config(text="解密信息："+str(m))
+        win=Tk()
+        win.title("RSA算法(解密)")
+        win.geometry("400x200")
+        l1=Label(win,text="请输入密文：")
+        l1.grid(row=0,column=0,sticky=W)
+        l2=Label(win,text="请输入公钥n：")
+        l2.grid(row=1,column=0,sticky=W)
+        l3=Label(win,text="请输入私钥d：")
+        l3.grid(row=2,column=0,sticky=W)
+        l4=Label(win,text="解密信息")
+        l4.grid(row=3,column=0,sticky=W)
+        number=StringVar()
+        mtext=Entry(win,textvariable=number,width=16) #Entry控件获取密文输入
+        mtext.grid(row=0,column=1,sticky=W)
+        nt=StringVar()
+        ntext=Entry(win,textvariable=nt,width=16) #Entry控件获取公钥n输入
+        ntext.grid(row=1,column=1,sticky=W)
+        dt=StringVar()
+        dtext=Entry(win,textvariable=dt,width=16) #Entry控件获取私钥d输入
+        dtext.grid(row=2,column=1)
+        btn1=Button(win,text="解密")
+        btn1.config(anchor=CENTER)
+        btn1.config(command=decrypt) #Button1控件触发消息加密事件
+        btn1.grid(row=4,column=1)
+        win.mainloop()
+window_d()
+---------------------------------------------------------------------------------------------------------------------------------------
+import rsa  #RSA库加密
+from tkinter import *
+def window_e():
+    def encrypt():
+        (public_key,private_key)=rsa.newkeys(512)
+        prikey=private_key.save_pkcs1()
+        with open('私有密钥.txt','wb+')as file:
+            file.write(prikey)
+        m=number.get().encode('utf8')
+        c=rsa.encrypt(m,public_key)
+        message=rsa.decrypt(c,private_key)
+        sign=rsa.sign(m,private_key,'SHA-1') #进行数字签名
+        l1.config(text="输入的信息："+str(number.get()))
+        l2.config(text="加密信息："+str(c))
+        l2_1.config(text="解密信息："+str(message))
+        l3.config(text="公有密钥："+str(public_key))
+        l4.config(text="私有密钥："+str(private_key))
+        l5.config(text="数字签名："+str(sign))
+        l6.config(text="验证签名："+str(rsa.verify(m,sign,public_key))) #使用公有密钥进行验证签名
+        f=open('加密文本.txt','w+') #将加密后的信息写入加密文本.txt中
+        f.writelines(str(m))
+        f.writelines('\n')
+        f.writelines(str(c))
+        f.writelines('\n')
+        f.writelines(str(public_key))
+        f.writelines('\n')
+        f.writelines(str(private_key))
+        f.close()
+    win=Tk()
+    win.title("RSA算法(加密）")
+    win.geometry("1000x200")
+    l1=Label(win,text="请输入信息：")
+    l1.grid(row=0,column=0,sticky=W)
+    l2=Label(win,text="加密信息")
+    l2.grid(row=1,column=0,sticky=W)
+    l2_1=Label(win,text="解密信息")
+    l2_1.grid(row=2,column=0,sticky=W)
+    l3=Label(win,text="公有密钥")
+    l3.grid(row=3,column=0,sticky=W)
+    l4=Label(win,text="私有密钥")
+    l4.grid(row=4,column=0,sticky=W)
+    l5=Label(win,text="数字签名")
+    l5.grid(row=5,column=0,sticky=W)
+    l6=Label(win,text="验证签名")
+    l6.grid(row=6,column=0,sticky=W)
+    number=StringVar()
+    text=Entry(win,textvariable=number,width=32) #Entry控件获取消息输入
+    text.grid(row=0,column=1,sticky=W)
+    btn1=Button(win,text="加密")
+    btn1.config(anchor=CENTER)
+    btn1.config(command=encrypt) #Button1控件触发消息加密事件
+    btn1.grid(row=8,sticky=W)
+    win.mainloop()
+window_e()
+
