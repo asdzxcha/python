@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue May 26 21:39:26 2020
+
+@author: 11799
+"""
+
+import requests
+from bs4 import BeautifulSoup
+import re  #正则表达式库
+
+r=requests.get('http://python123.io/ws/demo.html')
+demo=r.text
+soup=BeautifulSoup(demo,'html.parser')
+#for link in soup.find_all('a'):  #查找所有a标签下的href
+#    print(link.get('href'))
+
+#for tag in soup.find_all(True): #打印所有标签名
+#    print(tag.name) 
+
+#for tag in soup.find_all(re.compile('b')):  #打印所有b开头的信息
+#    print(tag.name)
+
+#print(soup.find_all('p','course'))  #p标签中包含course属性
+#print(soup.find_all(id='link1'))    #id=link1标签
+
+#print(soup.find_all(id=re.compile('link'))) #包含link
+
+#print(soup.find_all('a',recursive=False))   #不对子孙检索
+
+print(soup.find_all(string='Basic Python'))
+print(soup.find_all(string=re.compile('Python')))
