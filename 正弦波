@@ -1,0 +1,26 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May 13 20:16:05 2020
+
+@author: 11799
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# =============================================================================
+# matplotlib.rcParams['font.family']='STSong'
+# matplotlib.rcParams['font.size']=20
+# =============================================================================
+
+a=np.arange(0.0,5.0,0.02)
+plt.plot(a,np.cos(a*np.pi*2),'r--')
+
+plt.xlabel('x轴:时间',fontproperties='SimHei',fontsize=15,color='pink')
+plt.ylabel('y轴:振幅',fontproperties='SimHei',fontsize=15)
+plt.title(r'正弦波实例 $y=cos(2\pi x)$',fontproperties='SimHei',fontsize=25) #Latex文本
+plt.text(2,1,r'$\mu=100$',fontsize=15)
+
+plt.axis([-1,6,-2,2])
+plt.grid(True)
+plt.show()
