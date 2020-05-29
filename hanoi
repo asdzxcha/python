@@ -1,0 +1,15 @@
+count=0
+def hanoi(n,begin,end,mid):
+    global count
+    if n==1:
+        print("{}:{}-->{}".format(1,begin,end))
+        count+=1
+    else:
+        hanoi(n-1,begin,mid,end)
+        print("{}:{}-->{}".format(n,begin,end))
+        count+=1
+        hanoi(n-1,mid,end,begin)
+n=eval(input())
+hanoi(n,"A","C","B")
+print(count)
+
