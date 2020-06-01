@@ -63,8 +63,8 @@ class List():   #列表
             return False
     def size(self):
         return len(self.items)
-        
-        class Node():   #节点
+
+class Node():   #节点
     def __init__(self,initdata):
         self.data=initdata
         self.next=None
@@ -80,3 +80,119 @@ class List():   #列表
         
     def setNext(self,newnext):
         self.next=newnext
+
+class Unorderedlist():  #无序表
+    def __init__(self):
+        self.head=None
+        
+    def isEmpty(self):
+        if self.head==None:
+            return True
+        else:
+            return False
+         
+    def add(self,item): 
+        temp=Node(item)
+        temp.setNext(self.head)
+        self.head=temp
+        
+    def size(self):
+        current=self.head
+        count=0
+        while current !=None:
+            count=count+1
+            current=current.getNext()        
+        return count
+        
+    def search(self,item):
+        current=self.head
+        found=False
+        while current!=None and not found:
+            if current.getData()==item:
+                found=True
+            else:
+                current=current.getNext()
+        return found
+    
+    def remove(self,item):
+        current=self.head
+        previous=None  #前一个节点
+        found=False
+        while not found:
+            if current.getData()==item:
+                found=True
+            else:
+                previous=current
+                current=current.getNext()
+            if previous==None:
+                self.head=current.getNext()
+            else:
+                previous.setNext(current.getNext())
+                
+class OrderedList:  #有序表
+    def __init__(self):
+        self.head=None
+    
+    def isEmpty(self):
+        if self.head==None:
+            return True
+        else:
+            return False
+         
+    def add(self,item): 
+        current=self.head
+        previous=None
+        while current!=None:
+            if current.getData()>item:
+                break
+            else:
+                previous=current
+                current=current.getData()
+        temp=Node(item)
+        if previous==None:
+            temp.setData(self.head)
+            self.head=temp
+        else:
+            temp.setNext(current)
+            previous.setNext(temp)
+            
+    def size(self):
+        current=self.head
+        count=0
+        while current !=None:
+            count=count+1
+            current=current.getNext()        
+        return count
+        
+    def search(self,item):
+        current=self.head
+        found=False
+        stop=False
+        while current!=None and not found and not stop:
+            if current.getData()==item:
+                found=True
+            else:
+                if current.getData()>item:
+                    stop=True
+                else:
+                    current=current.gatNext()
+        return found
+    
+    def remove(self,item):
+        current=self.head
+        previous=None  #前一个节点
+        found=False
+        while not found:
+            if current.getData()==item:
+                found=True
+            else:
+                previous=current
+                current=current.getNext()
+            if previous==None:
+                self.head=current.getNext()
+            else:
+                previous.setNext(current.getNext())
+                
+u=Unorderedlist()
+u.add(54)
+print(u.search(5))
